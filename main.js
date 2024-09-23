@@ -12,9 +12,9 @@ async function buildAndSignTransaction() {
   // Define the transaction
   const tx = {
     to: "0x659Dc87Afd2E850F4BB243318c4DDE3993b35105", // Replace with recipient address
-    value: ethers.utils.parseEther("0.01"), // 0.01 ETH
+    value: ethers.parseEther("0.01"), // 0.01 ETH
     gasLimit: 21000, // Standard gas limit for a simple ETH transfer
-    gasPrice: ethers.utils.parseUnits("10", "gwei"), // Gas price in gwei
+    gasPrice: ethers.parseUnits("10", "gwei"), // Gas price in gwei
     nonce: 1000, // Get the nonce (transaction count)
     chainId: 56, // Mainnet
   };
@@ -29,22 +29,28 @@ async function buildAndSignTransaction() {
   const tx2Raw =
     "0xf8ec8307f58584b8c6fe72830927c094bddbcbaa9cf9603b7055aad963506ede71692f1280b8830000000300000000000000000000000000000000000000000000000087250559b9145f9000000000000000000000000000000000000000000000011f35cc4934f0b52a80bb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c55d398326f99059ff775485246999027b319795500006400000000000000000af935e000000000000000008193a0f63bed83d054bdecfb6852f980ed62f35922fe5b68296b603b290a3eff41fabea04b73872c7e68f541bc97eba52abf956eac4a0e198b762e1f9a872336f6748eed";
 
-  const hashTx1Raw = ethers.utils.keccak256(tx1Raw).slice(2);
+  const hashTx1Raw = ethers.keccak256(tx1Raw).slice(2);
   console.log("Hash of tx1Raw:", hashTx1Raw);
-  const hashTx2Raw = ethers.utils.keccak256(tx2Raw).slice(2);
+  const hashTx2Raw = ethers.keccak256(tx2Raw).slice(2);
   console.log("Hash of tx2Raw:", hashTx2Raw);
   console.log(hashTx1Raw + hashTx2Raw);
 
-  const hashedConcat = ethers.utils
+  const hashedConcat = ethers
     .keccak256("0x" + hashTx1Raw + hashTx2Raw)
     .slice(2);
 
-  const key = new ethers.utils.SigningKey("0x" + privateKey);
-  const signature1 = key.signDigest("0x" + hashedConcat);
-  console.log("Signature mode 1:", signature1);
-
-  const signature2 = await wallet.signMessage(hashedConcat);
-  console.log("Signature mode 2:", signature2);
+  // ---------------  mode 1
+  const key = new ethers.SigningKey("0x" + privateKey);
+  const signatureSerialized = key.sign("0x" + hashedConcat).serialized;
+  const signatureCompactSerialized = key.sign(
+    "0x" + hashedConcat
+  ).compactSerialized;
+  console.log("Signature mode 1:", signatureSerialized);
+  console.log("Signature mode 1:", signatureCompactSerialized);
+  console.log(
+    "Signature mode _:",
+    "0x83e4b3a6af20e58315554b5bc38a8398cfca44a75d42973a4454378b0dc9cae63c229b52341d1ddfc4e3ad4360e518c1f1363e2d21fcba507e8e2e10e266edd201"
+  );
 }
 
 buildAndSignTransaction();
