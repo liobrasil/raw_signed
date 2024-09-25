@@ -3,11 +3,13 @@ const { ethers } = require("ethers");
 async function buildAndSignTransaction() {
   // ---------------  part 1
   // Private key of the sender
-  const privateKey =
-    "48acf19375e8a27309fe5394728abc2eb6d5a0a4feb6b6c53207ca1c256a6739";
+  const privateKey = "";
 
   // Create a wallet
   const wallet = new ethers.Wallet(privateKey);
+
+  const address = wallet.address;
+  console.log("Address:", address);
 
   // Define the transaction
   const tx = {
